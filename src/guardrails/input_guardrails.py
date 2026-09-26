@@ -69,8 +69,9 @@ def detect_injection(user_input: str) -> InputStatus:
         r"\b(?:reveal|show|print|expose)\s+(?:me\s+)?(?:the\s+)?(?:admin\s+password|api\s+key)\b",
     ]
 
+    normalized = _normalize(user_input)
     for pattern in INJECTION_PATTERNS:
-        if re.search(pattern, _normalize(user_input), re.IGNORECASE):
+        if re.search(pattern, normalized, re.IGNORECASE):
             return "BLOCK"
     return "ALLOW"
 
@@ -108,8 +109,7 @@ def topic_filter(user_input: str) -> InputStatus:
 
     if any(contains(topic) for topic in BLOCKED_TOPICS):
         return "BLOCK"
-    # Vietnamese transfer terminology in addition to the configured topics.
-    if any(contains(topic) for topic in [*ALLOWED_TOPICS, "chuyen khoan"]):
+    if any(contains(topic) for topic in ALLOWED_TOPICS):
         return "ALLOW"
     return "BLOCK"
 

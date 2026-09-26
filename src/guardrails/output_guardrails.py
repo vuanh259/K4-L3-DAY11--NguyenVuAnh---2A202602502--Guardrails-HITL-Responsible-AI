@@ -5,6 +5,7 @@ Checkpoint 2 — Output Guardrails
   - LLM-as-Judge                          ← optional (không chấm)
 """
 import re
+import unicodedata
 import textwrap
 
 from google.genai import types
@@ -38,25 +39,51 @@ def content_filter(response: str) -> dict:
         dict with 'safe', 'issues', and 'redacted' keys
     """
     issues = []
+    # Canonicalize compatibility forms and hidden characters before matching.
+    response = "".join(c for c in unicodedata.normalize("NFKC", response)
+                       if unicodedata.category(c) != "Cf")
     redacted = response
+    secret_patterns = []
+    for secret in DEMO_SECRETS:
+        if not secret:
+            continue
+        secret_patterns.append(re.escape(secret))
+        compact = "".join(c for c in unicodedata.normalize("NFKC", secret) if c.isalnum())
+        if compact:
+            # Catch spaced/punctuated disclosure using the loaded secret,
+            # rather than a separate list of hard-coded demo credentials.
+            secret_patterns.append(r"[\W_]*".join(re.escape(c) for c in compact))
 
     # PII patterns to check
     PII_PATTERNS = {
-        "demo_secret": "|".join(re.escape(secret) for secret in DEMO_SECRETS if secret),
+        "demo_secret": "|".join(secret_patterns),
         "phone": r"(?<!\w)(?:0|\+84[ .-]?)(?:\d[ .-]?){8,9}\d(?!\w)",
         "email": r"[\w.+-]+@[\w.-]+\.[a-zA-Z]{2,}",
-        "national_id": r"\b(?:\d{9}|\d{12})\b",
+        "national_id": r"(?<!\w)(?:(?:\d[ .-]?){11}\d|(?:\d[ .-]?){8}\d)(?!\w)",
         "api_key": r"\bsk-[a-zA-Z0-9_-]+",
+        "internal_host": r"\b(?:[a-zA-Z0-9-]+\.)+internal\b(?::\d+)?",
         "password": r"\b(?:password|mật khẩu)\s*[\"']?\s*(?:[:=]|is\b|là\b)\s*[^\s,;]+",
     }
 
+    spans = []
     for name, pattern in PII_PATTERNS.items():
         if not pattern:
             continue
-        matches = re.findall(pattern, response, re.IGNORECASE)
+        matches = list(re.finditer(pattern, response, re.IGNORECASE))
         if matches:
             issues.append(f"{name}: {len(matches)} found")
-            redacted = re.sub(pattern, "[REDACTED]", redacted, flags=re.IGNORECASE)
+            spans.extend(match.span() for match in matches)
+
+    # Merge overlaps before substitution so a phone match cannot partially
+    # redact a longer national ID and prevent the full ID from being removed.
+    merged = []
+    for start, end in sorted(spans):
+        if merged and start <= merged[-1][1]:
+            merged[-1] = (merged[-1][0], max(end, merged[-1][1]))
+        else:
+            merged.append((start, end))
+    for start, end in reversed(merged):
+        redacted = redacted[:start] + "[REDACTED]" + redacted[end:]
 
     return {
         "safe": len(issues) == 0,

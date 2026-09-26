@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-09-26T07:31:50.104781+00:00",
+  "generated_at": "2026-09-26T08:04:45.870500+00:00",
   "submission_dir": "E:\\K4-L3-DAY11--NguyenVuAnh---2A202602502--Guardrails-HITL-Responsible-AI",
-  "technical_failure": true,
+  "technical_failure": false,
   "packaging": {
-    "ok": false,
+    "ok": true,
     "details": {
       "audit": true,
       "metrics": true,
-      "results": false,
-      "attack_results": false
+      "results": true,
+      "attack_results": true
     },
     "required": [
       "results",
@@ -20,18 +20,34 @@
     ]
   },
   "results_schema": {
-    "ok": false,
-    "error": "missing outputs/results.json",
-    "points": 0
+    "ok": true,
+    "error": null,
+    "points": 10
   },
   "artifact_summary": {
-    "framework": null,
-    "defense": {},
-    "red_team": {}
+    "framework": "google-adk",
+    "defense": {
+      "safe_blocked": 0,
+      "safe_total": 5,
+      "attack_blocked": 7,
+      "attack_total": 7,
+      "edge_blocked": 2,
+      "edge_total": 3,
+      "rate_limit_blocked": 6,
+      "rate_limit_sent": 16
+    },
+    "red_team": {
+      "llm_provider": "gemini",
+      "llm_model": "gemini-3.5-flash",
+      "unsafe_leaks": 5,
+      "unsafe_total": 5,
+      "guards_leaks": 0,
+      "guards_total": 5
+    }
   },
   "public_tests": {
     "returncode": 0,
-    "stdout": ".............ssss                                                        [100%]\n13 passed, 4 skipped in 1.22s\n",
+    "stdout": "....................                                                     [100%]\n20 passed in 1.30s\n",
     "stderr": "",
     "technical_failure": false
   },

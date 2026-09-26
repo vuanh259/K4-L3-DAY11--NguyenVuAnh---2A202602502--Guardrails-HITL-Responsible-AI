@@ -2,36 +2,36 @@
 
 > File này **tự sinh** bởi `scripts/grade.py`. **Không** viết / sửa tay.
 
-- Generated (UTC): `2026-09-26T07:31:50.104781+00:00`
-- Framework: `—`
-- Technical failure: **True**
+- Generated (UTC): `2026-09-26T08:04:45.870500+00:00`
+- Framework: `google-adk`
+- Technical failure: **False**
 
 ## Packaging
 
 | File | Status |
 |------|--------|
-| results.json | MISSING |
-| attack_results.json | MISSING |
+| results.json | OK |
+| attack_results.json | OK |
 | audit_log.json | OK |
 | metrics.json | OK |
 
 ## Schema (`results.json`)
 
-- Valid: **False**
-- Error: `missing outputs/results.json`
+- Valid: **True**
+- Error: `None`
 
 ## Defense snapshot (từ `results.json`)
 
-- Safe queries blocked: `None/None`
-- Attack queries blocked: `None/None`
-- Edge cases blocked: `None/None`
-- Rate limit blocked/sent: `None/None`
+- Safe queries blocked: `0/5`
+- Attack queries blocked: `7/7`
+- Edge cases blocked: `2/3`
+- Rate limit blocked/sent: `6/16`
 
 ## Red Team snapshot (từ `attack_results.json`)
 
-- Provider / model: `None` / `None`
-- Unsafe leaks (Red): `None/None`
-- Guards leaks (Red Advance): `None/None`
+- Provider / model: `gemini` / `gemini-3.5-flash`
+- Unsafe leaks (Red): `5/5`
+- Guards leaks (Red Advance): `0/5`
 
 ## Public tests
 
@@ -39,8 +39,8 @@
 - Technical failure: `False`
 
 ```text
-.............ssss                                                        [100%]
-13 passed, 4 skipped in 1.22s
+....................                                                     [100%]
+20 passed in 1.30s
 ```
 
 ## Notes

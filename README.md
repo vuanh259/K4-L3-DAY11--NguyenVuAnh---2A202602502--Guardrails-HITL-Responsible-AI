@@ -2,12 +2,20 @@
 
 Học viên: **Nguyễn Vũ Anh** · MSSV: **2A202602502**.
 
+Model Blue đang chạy: `liquid/lfm-2.5-2.6b:free` trên OpenRouter, theo lựa chọn
+của học viên sau khi ID `liquid/lfm-2.5-2.6b` trong starter trả 404.
+
 Chạy từ gốc repo bằng Python trong `.venv`: `python src/main.py --part 2`,
 `python src/main.py --part 3`, rồi `python src/main.py --part 4`.
 PowerShell cần `$env:PYTHONUTF8 = "1"` nếu terminal không hỗ trợ tiếng Việt.
 CP3 gọi Blue thật cho các câu qua input; nhóm spam kiểm tra riêng rate limiter
 không gọi LLM và ghi rõ chế độ này trong artifact. Audit và monitoring là observer
 bao quanh các callback; audit che PII/secret bằng output filter trước khi lưu.
+Quy tắc chặn dùng regex theo loại hành vi, topic/egress allowlist trong cấu hình,
+và secret đọc từ `data/protected/vinbank_secrets.json`; không so khớp nguyên câu
+trong bộ test hoặc gán sẵn cờ `blocked`. Egress tái dùng output filter của Blue.
+Test hồi quy thay secret/topic trong bộ nhớ để kiểm chứng bộ lọc theo cấu hình,
+đồng thời kiểm tra Unicode, secret chèn dấu cách và các PII ngoài dữ liệu mẫu.
 Chọn bonus **B1 (Red)**; kết quả leak được xác định từ phản hồi thực tế và grader replay.
 
 > 👤 **Hình thức:** bài tập **cá nhân** (1 người / 1 MSSV).  
